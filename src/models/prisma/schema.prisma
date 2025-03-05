@@ -7,23 +7,67 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id           String      @id @default(uuid())
+  username     String?      @unique
+  password     String?
+  email        String?      @unique
+  role         Role
+  student      Student?    @relation("UserToStudent")
+  studentId    String?     @unique // Foreign key to Student
+  instructor   Instructor? @relation("UserToInstructor")
+  instructorId String?     @unique // Foreign key to Instructor
+  createdAt    DateTime?    @default(now())
+  updatedAt    DateTime?    @updatedAt
+}
+
+enum Role {
+  STUDENT
+  INSTRUCTOR
+  ADMIN
+}
 model Student {
-  id          String   @id @default(uuid())
-  firstName   String?
-  lastName    String?
-  email       String?   @unique
-  password    String ? 
-  studentID   String?   @unique 
-  department  String ? 
-  language    String ? 
-  year        Int? 
-  section     String?  
-  phone       String? 
-  dob         DateTime?
-  gender      String?
-  address     String? 
-  profilePhotoURL  String?
-  firstTimeLogin   Boolean? @default(true)
-  createdAt   DateTime @default(now()) 
-  updatedAt   DateTime @updatedAt  
+  id              String    @id @default(uuid())
+  userId          String    @unique // Foreign key to User
+  user            User     @relation("UserToStudent", fields: [userId], references: [id], onDelete: Cascade)
+  firstName       String
+  lastName        String?
+  studentId       String    @unique // Unique student identifier (e.g., matriculation number)
+  department      String?
+  language        String?
+  year            Int?
+  section         String?
+  phone           String?
+  dob             DateTime?
+  gender          String?
+  address         String?
+  profilePhotoURL String?
+  firstTimeLogin  Boolean   @default(true)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model Instructor {
+  id              String    @id @default(uuid())
+  userId          String    @unique // Foreign key to User
+  user            User      @relation("UserToInstructor", fields: [userId], references: [id], onDelete: Cascade)
+  firstName       String?
+  lastName        String?
+  instructorId    String    @unique // Unique instructor identifier
+  department      String?
+  language        String?
+  phone           String?
+  gender          String?
+  bio             String?
+  expertise       String?
+  profilePhotoURL String?
+  experience      Int?      @default(0)
+  salary          Decimal?
+  isActive        Boolean   @default(true)
+  hiredDate       DateTime? @default(now())
+  updatedAt       DateTime  @updatedAt
+  address         String?
+  linkedin        String?
+  twitter         String?
+  website         String?
 }

@@ -1,8 +1,9 @@
 import express from "express";
-import { registerUser,loginUser } from "../controller/auth/authController"; 
+import { registerStudent,loginUser } from "../controller/authController"; 
+
 const router=express.Router();
 
-router.post("/register",registerUser);
+router.post("/registerStudent",registerStudent);
 router.post("/login",loginUser);
 
 
