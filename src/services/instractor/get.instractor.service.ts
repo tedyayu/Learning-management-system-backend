@@ -8,3 +8,11 @@ export const getInstractorByUserName=async(username:string) => {
         }
         })
 }
+
+export const getInstractorsAll=async()=>{
+    return await prisma.instructor.findMany({
+        include: {
+            user: true, // Include related user data if needed
+        },
+    });
+}

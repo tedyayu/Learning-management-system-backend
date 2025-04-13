@@ -32,15 +32,22 @@ export const loginUser= asyncHandler(async (req:Request,res:Response)=>{
     if (!secret) {
         throw new Error("JWT_SECRET is not defined in environment variables");
     }
+    console.log("req cookies",req.cookies);
     
     try {
 
-        const user=await getStudentByUserName(username);
-        console.log(user);
         if (username === adminUsername && password === adminPassword) {
             const token = jwt.sign({ username, role: 'ADMIN' }, secret, { expiresIn: "1h" });
-            return res.json({ token, role: 'ADMIN'});
+            console.log("Admin token:", token);
+            res.cookie("token", token, { httpOnly: true, secure: false, sameSite: "strict" });
+            res.json({ message: "Login successful", username, role: "ADMIN" });
+            return;
         }
+            
+
+        const user=await getStudentByUserName(username);
+        console.log(user);
+        
         if (!user) {
             return res.status(401).json({ error: "Invalid credentials - User not found" });
         }
@@ -57,11 +64,24 @@ export const loginUser= asyncHandler(async (req:Request,res:Response)=>{
         const token = jwt.sign({ id: user.id, role: user.role },secret, { expiresIn: "1h" });
         
 
-        console.log(token, user.role,user);
-
-        res.json({token, role:user.role, user});
+        console.log(token,user);
+        res.cookie("token", token, { httpOnly: true, secure: false, sameSite: "strict" });
+        res.json({ user});
     } catch (error) {
         console.error("Login error", error);
         return res.status(500).json({ error: "An error occurred while logging in" });
     }
+});
+
+export const logOutUser = asyncHandler(async (req: Request, res: Response) => {
+    console.log("cookies",req.cookies);
+        res.cookie('token', '', {
+            httpOnly: true,
+            expires: new Date(0), 
+            secure: false, 
+            sameSite: 'strict'
+        });
+
+        res.status(200).json({ message: "Logged out successfully" });
+   
 });

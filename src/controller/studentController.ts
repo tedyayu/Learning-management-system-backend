@@ -1,4 +1,3 @@
-import { authenticateUser } from './../middleware/auth.middleware';
 import { Request, Response } from "express";
 import { asyncHandler } from "../utils/asyncHandler";
 import { fetchStudents ,searchStudent, getUserById, updateStudentProfile, updateStudentPassword} from "../services/student";
@@ -30,6 +29,7 @@ export const updateProfile = asyncHandler(async (req: AuthenticatedRequest, res:
     try {
         const {profilePhoto, firstName, lastName, email,language,phoneNumber} = req.body;
         const  {id}  = req.user;
+        console.log("the req user from controller",id);
        
         await updateStudentProfile( profilePhoto, firstName, lastName, email,language,phoneNumber ,id);
         res.json({ message: "Student profile updated successfully" });

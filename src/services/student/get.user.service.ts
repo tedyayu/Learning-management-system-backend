@@ -21,7 +21,7 @@ export const getStudentByEmail=async(email:string) => {
         })      
     }
 export const getStudentById=async(id:string) => {
-    return await prisma.student.findFirst({
+    return await prisma.user.findFirst({
         where: {
             id: id
         }

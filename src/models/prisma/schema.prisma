@@ -14,9 +14,9 @@ model User {
   email        String?      @unique
   role         Role
   student      Student?    @relation("UserToStudent")
-  studentId    String?     @unique // Foreign key to Student
+  studentId    String?     @unique
   instructor   Instructor? @relation("UserToInstructor")
-  instructorId String?     @unique // Foreign key to Instructor
+  instructorId String?     @unique 
   createdAt    DateTime?    @default(now())
   updatedAt    DateTime?    @updatedAt
 }
@@ -28,11 +28,11 @@ enum Role {
 }
 model Student {
   id              String    @id @default(uuid())
-  userId          String    @unique // Foreign key to User
-  user            User     @relation("UserToStudent", fields: [userId], references: [id], onDelete: Cascade)
-  firstName       String
+  userId          String ?   @unique 
+  user            User  ?   @relation("UserToStudent", fields: [userId], references: [id], onDelete: Cascade)
+  firstName       String ?
   lastName        String?
-  studentId       String    @unique // Unique student identifier (e.g., matriculation number)
+  studentId       String    @unique 
   department      String?
   language        String?
   year            Int?
@@ -42,18 +42,22 @@ model Student {
   gender          String?
   address         String?
   profilePhotoURL String?
-  firstTimeLogin  Boolean   @default(true)
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  firstTimeLogin  Boolean ?  @default(true)
+  createdAt       DateTime ? @default(now())
+  updatedAt       DateTime ? @updatedAt
+
+  Submission Submission[]
+
+  QuizAttempt QuizAttempt[]
 }
 
 model Instructor {
   id              String    @id @default(uuid())
-  userId          String    @unique // Foreign key to User
-  user            User      @relation("UserToInstructor", fields: [userId], references: [id], onDelete: Cascade)
+  userId          String?  @unique 
+  user            User?   @relation("UserToInstructor", fields: [userId], references: [id], onDelete: Cascade)
   firstName       String?
   lastName        String?
-  instructorId    String    @unique // Unique instructor identifier
+  instructorId    String    
   department      String?
   language        String?
   phone           String?
@@ -63,11 +67,135 @@ model Instructor {
   profilePhotoURL String?
   experience      Int?      @default(0)
   salary          Decimal?
-  isActive        Boolean   @default(true)
+  isActive        Boolean ?  @default(true)
   hiredDate       DateTime? @default(now())
   updatedAt       DateTime  @updatedAt
   address         String?
   linkedin        String?
   twitter         String?
   website         String?
+
+  Courses Courses[]
+}
+
+model Department {
+  id            String       @id @default(uuid())
+  name          String?  @unique
+  lead          String?
+  description   String?
+  email         String?
+  location      String?
+  status        String?   @default("Active")
+  archived      Boolean?  @default(false)
+  createdBy     String?  
+  createdDate   DateTime  @default(now())
+  published     Boolean?  @default(false)
+  courses       Courses[]
+}
+
+model Courses {
+  id              String   @id @default(uuid())  
+  name            String?                         
+  code            String?           
+  description     String?                        
+  credits         Int?                           
+  department      Department? @relation(fields: [departmentId], references: [id])  
+  departmentId    String?                        
+
+  instructor      Instructor? @relation(fields: [instructorId], references: [id]) 
+  instructorId    String?                        
+
+  startDate       DateTime? 
+  endDate         DateTime?
+  status         String?   @default("unpublished")     
+  language       String?
+  syllabus        String?   
+  
+  createdAt       DateTime?  @default(now()) 
+  updatedAt       DateTime?  @updatedAt       
+  
+  lessons         Lesson[]
+  quizzes         Quiz[]
+}
+
+model Lesson {
+  id           String   @id @default(uuid())
+  title        String?
+  description  String?  
+  content      String?  
+  pdfUrl       String?   
+  videoUrl     String?   
+  isPublished  Boolean?  @default(false) 
+  course       Courses?   @relation(fields: [courseId], references: [id])
+  courseId     String?
+
+  assignments  Assignment[]  
+  
+  createdAt    DateTime? @default(now()) 
+  updatedAt    DateTime? @updatedAt 
+}
+
+model Assignment {
+  id         String   @id @default(uuid())
+  title      String?
+  description String?
+  dueDate    DateTime?
+  lesson     Lesson?  @relation(fields: [lessonId], references: [id])
+  lessonId   String?
+  createdAt  DateTime? @default(now()) 
+  updatedAt  DateTime? @updatedAt 
+
+  Submission Submission[]
+}
+
+model Submission {
+  id           String   @id @default(uuid())
+  fileUrl      String? 
+  submittedAt  DateTime? @default(now())  
+
+  assignment   Assignment? @relation(fields: [assignmentId], references: [id])
+  assignmentId String?
+
+  student      Student?  @relation(fields: [studentId], references: [id])
+  studentId    String?
+}
+
+model Quiz {
+  id        String    @id @default(uuid())
+  title     String?
+  duration  Int?   
+  isOpen    Boolean? @default(true) 
+  course    Courses?  @relation(fields: [courseId], references: [id])
+  courseId  String?
+
+  questions Question[]   
+  attempts  QuizAttempt[] 
+
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
+}
+
+model Question {
+  id       String   @id @default(uuid())
+  quiz     Quiz?   @relation(fields: [quizId], references: [id])
+  quizId   String?
+  question String?
+  options  String[] 
+  answer   String?
+
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
+}
+
+model QuizAttempt {
+  id        String   @id @default(uuid())
+  quiz      Quiz?    @relation(fields: [quizId], references: [id])
+  quizId    String?
+  student   Student? @relation(fields: [studentId], references: [id])
+  studentId String ?
+  score     Int?
+  startTime DateTime?
+  endTime   DateTime?
+
+  createdAt DateTime? @default(now())
 }

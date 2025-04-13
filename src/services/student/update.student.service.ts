@@ -2,15 +2,23 @@ import prisma from "../../utils/prismaInstance";
 
 export const updateStudentProfile = async (profilePhoto: string, firstName:string, lastName:string, email:string,language:string,phoneNumber:string,id:string) => {
     try {
-        await prisma.student.update({
+        await prisma.user.update({
             where: {
                 id: id
+            },
+            data: {
+                email: email,
+                username: firstName
+            }
+        })
+        await prisma.student.update({
+            where: {
+                userId: id
             },
             data: {
                 profilePhotoURL: profilePhoto,
                 firstName: firstName,
                 lastName: lastName,
-                //email: email,
                 language: language,
                 phone: phoneNumber
             }});
