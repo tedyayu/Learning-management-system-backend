@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import { asyncHandler } from "../utils/asyncHandler";
-import { createNewCourse , getAllCourses, fetchSingleCourse} from "../services/course";
+import { createNewCourse , getAllCourses, fetchSingleCourse,enrollStudentsInCourse, getEnrolledStudentsforCourse} from "../services/course";
 import { assignInstractor } from "../services/course";
-import ConflictError from "../errors/conflict.error";
+import ConflictError from "../errors/conflict.error";       
 
 
 export const createCourse = asyncHandler(async (req: Request, res: Response) => {
@@ -57,10 +57,7 @@ export const getSingleCourse = asyncHandler(async (req: Request, res: Response) 
 export const assignInstractorForCourse = asyncHandler(async (req: Request, res: Response) => {
     try {
         const { courseId, instractorId } = req.params;
-        console.log("The course id is", courseId);
-        console.log("The instractor id is", instractorId);
         const course = await fetchSingleCourse(courseId);
-        console.log("The course is", course);
         if (!course) {
             return res.status(404).json({ error: "Course not found" });
         }
@@ -74,6 +71,44 @@ export const assignInstractorForCourse = asyncHandler(async (req: Request, res: 
     } catch (error) {
         console.error("Error fetching course:", error);
         res.status(500).json({ error: "An error occurred while fetching the course" });
+    }
+}
+);
+
+export const enrollStudents = asyncHandler(async (req: Request, res: Response) => {
+    try {
+        const { selectedStudents, courseId } = req.body;
+        if (!courseId || !selectedStudents || selectedStudents.length === 0) {
+            return res.status(400).json({ error: "Course ID and student IDs are required" });
+        }
+        const course = await fetchSingleCourse(courseId);
+        if (!course) {
+            return res.status(404).json({ error: "Course not found" });
+        }
+        const enrollmentResult = await enrollStudentsInCourse(courseId, selectedStudents);
+        res.json(enrollmentResult);
+    } catch (error) {
+        console.error("Error enrolling students:", error);
+        res.status(500).json({ error: "An error occurred while enrolling students" });
+    }
+}
+);
+
+export const getEnrolledStudents = asyncHandler(async (req: Request, res: Response) => {
+    try {
+        const { courseId } = req.params;
+        if (!courseId) {
+            return res.status(400).json({ error: "Course ID is required" });
+        }
+        const course = await fetchSingleCourse(courseId);
+        if (!course) {
+            return res.status(404).json({ error: "Course not found" });
+        }
+        const enrolledStudents = await getEnrolledStudentsforCourse(courseId);
+        res.json(enrolledStudents);
+    } catch (error) {
+        console.error("Error fetching enrolled students:", error);
+        res.status(500).json({ error: "An error occurred while fetching enrolled students" });
     }
 }
 );

@@ -3,7 +3,6 @@ import axios from 'axios';
 
 const router: Router = express.Router();
 
-console.log(process.env)
 
 router.post("/", async (req: Request, res: Response): Promise<void> => {
     const { product_name } = req.body;

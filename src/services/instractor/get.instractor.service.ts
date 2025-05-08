@@ -5,7 +5,10 @@ export const getInstractorByUserName=async(username:string) => {
     return await prisma.user.findFirst({
         where: {
             username: username
-        }
+        },
+        include: {
+            instructor: true, 
+        },
         })
 }
 
@@ -15,4 +18,16 @@ export const getInstractorsAll=async()=>{
             user: true, // Include related user data if needed
         },
     });
+}
+
+export const getInstractorByUserID=async (id:string)=>{
+    return await prisma.instructor.findFirst({
+        where: {
+            userId: id
+        },
+        include: {
+            user: true, 
+            Courses: true,
+        },
+    })
 }

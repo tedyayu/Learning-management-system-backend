@@ -49,6 +49,8 @@ model Student {
   Submission Submission[]
 
   QuizAttempt QuizAttempt[]
+
+  CourseEnrollments CourseEnrollment[]
 }
 
 model Instructor {
@@ -116,6 +118,18 @@ model Courses {
   
   lessons         Lesson[]
   quizzes         Quiz[]
+  enrollments     CourseEnrollment[] @relation("CourseToEnrollment")
+}
+
+model CourseEnrollment {
+  id         String   @id @default(uuid())
+  student    Student  @relation(fields: [studentId], references: [userId], onDelete: Cascade)
+  studentId  String
+  course     Courses  @relation("CourseToEnrollment", fields: [courseId], references: [id], onDelete: Cascade)
+  courseId   String
+  enrolledAt DateTime @default(now())
+
+  @@unique([studentId, courseId]) 
 }
 
 model Lesson {
@@ -196,6 +210,5 @@ model QuizAttempt {
   score     Int?
   startTime DateTime?
   endTime   DateTime?
-
   createdAt DateTime? @default(now())
 }

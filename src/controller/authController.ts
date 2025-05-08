@@ -9,7 +9,7 @@ import ConflictError from "../errors/conflict.error";
 
 
 export const registerStudent = asyncHandler(async (req:Request,res:Response) => {
-    const {username,password,ID_NO,email }=req.body;
+    const {username,password,ID_NO,email ,department}=req.body;
     const hashedPassword=await bcrypt.hash(password,10);
 
     const user = await getStudentByUserName(username);
@@ -19,7 +19,8 @@ export const registerStudent = asyncHandler(async (req:Request,res:Response) => 
         username,
         password:hashedPassword,
         ID_NO,
-        email
+        email,
+        department
     })
     res.json(newStudent)
 });
@@ -31,9 +32,7 @@ export const loginUser= asyncHandler(async (req:Request,res:Response)=>{
     const secret = process.env.JWT_SECRET;
     if (!secret) {
         throw new Error("JWT_SECRET is not defined in environment variables");
-    }
-    console.log("req cookies",req.cookies);
-    
+    }    
     try {
 
         if (username === adminUsername && password === adminPassword) {
@@ -55,7 +54,7 @@ export const loginUser= asyncHandler(async (req:Request,res:Response)=>{
             return res.status(500).json({ error: "User password not set in database" });
         }
         const passwordMatch = await bcrypt.compare(password, user.password);
-        console.log("Password match:", passwordMatch); // Check bcrypt result
+        console.log("Password match:", passwordMatch); 
 
         if (!passwordMatch) {
             return res.status(401).json({ error: "Invalid credentials - Password mismatch" });

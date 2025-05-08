@@ -52,3 +52,39 @@ export const createNewCourse = async (courseData: CourseData) => {
         throw new Error("Could not delete department"); 
     }
 }
+
+export const enrollStudentsInCourse = async (courseId: string, selectedStudents: { id: string }[]) => {
+    try {
+        const studentIds = selectedStudents.map(student => student.id);
+
+        const course = await prisma.courses.findUnique({
+            where: { id: courseId },
+        });
+
+        if (!course) {
+            throw new Error("Course not found");
+        }
+
+        const students = await prisma.student.findMany({
+            where: { userId: { in: studentIds } },
+        });
+
+        console.log(`the students length is ${students.length} the student ids length is ${studentIds.length}`);
+
+        if (students.length !== studentIds.length) {
+            throw new Error("Some students not found");
+        }
+
+        const enrollments = await prisma.courseEnrollment.createMany({
+            data: studentIds.map(studentId => ({
+                courseId,
+                studentId,
+            })),
+        });
+
+        return enrollments;
+    } catch (error) {
+        console.error("Error enrolling students:", error);
+        throw new Error("Could not enroll students in course");
+    }
+}

@@ -35,7 +35,6 @@ app.use("/api/course",courseRoutes);
 app.use('/recommend',recommendationRoutes);
 
 
-
 app.use(errorHandlerMiddleware);
 
 const startServer=async()=>{
@@ -53,4 +52,3 @@ const startServer=async()=>{
 };
 
 startServer();
-

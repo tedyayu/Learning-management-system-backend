@@ -14,7 +14,11 @@ export const assignInstractor = async (courseId: string, instructorId: string) =
             where: { id: courseId },
             data: {
                 instructorId: instructorId,
-            }
+            },
+            include: {
+                instructor: true,
+                department: true,
+            },
         });
         return course;
     } catch (error) {

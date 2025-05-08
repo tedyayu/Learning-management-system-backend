@@ -6,6 +6,7 @@ interface CreateUserData {
     password: string;
     ID_NO: string;
     email: string;
+    department: string;
 }
 
 
@@ -23,6 +24,7 @@ export const  createStudent = async(data:CreateUserData) => {
         data:{
             firstName:data.username,
             studentId:data.ID_NO,
+            department:data.department,
             user:{
                 connect:{
                     id:user.id
