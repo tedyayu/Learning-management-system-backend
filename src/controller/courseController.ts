@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { asyncHandler } from "../utils/asyncHandler";
-import { createNewCourse , getAllCourses, fetchSingleCourse,enrollStudentsInCourse, getEnrolledStudentsforCourse} from "../services/course";
+import { createNewCourse , getAllCourses, fetchSingleCourse,enrollStudentsInCourse, getEnrolledStudentsforCourse, createNewChapter} from "../services/course";
 import { assignInstractor } from "../services/course";
 import ConflictError from "../errors/conflict.error";       
 
@@ -109,6 +109,26 @@ export const getEnrolledStudents = asyncHandler(async (req: Request, res: Respon
     } catch (error) {
         console.error("Error fetching enrolled students:", error);
         res.status(500).json({ error: "An error occurred while fetching enrolled students" });
+    }
+}
+);
+
+export const createChapter = asyncHandler(async (req: Request, res: Response) => {
+    try {
+        const { courseId } = req.params;
+        const chapterData  = req.body;
+        if (!courseId || !chapterData) {
+            return res.status(400).json({ error: "Course ID and course data are required" });
+        }
+        const course = await fetchSingleCourse(courseId);
+        if (!course) {
+            return res.status(404).json({ error: "Course not found" });
+        }
+        const newChapter = await createNewChapter(courseId, chapterData);
+        res.json(newChapter);
+    } catch (error) {
+        console.error("Error creating chapter:", error);
+        res.status(500).json({ error: "An error occurred while creating the chapter" });
     }
 }
 );

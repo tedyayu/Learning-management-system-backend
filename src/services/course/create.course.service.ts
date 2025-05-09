@@ -88,3 +88,28 @@ export const enrollStudentsInCourse = async (courseId: string, selectedStudents:
         throw new Error("Could not enroll students in course");
     }
 }
+
+export const createNewChapter = async (courseId: string, chapterData: {title : string}) => {
+    try {
+        const course = await prisma.courses.findUnique({
+            where: { id: courseId },
+        });
+
+        if (!course) {
+            throw new Error("Course not found");
+        }
+
+        const chapter = await prisma.chapter.create({
+            data: {
+                title: chapterData.title,
+                courseId: courseId,
+            },
+        });
+
+        return chapter;
+    } catch (error) {
+        console.error("Error creating chapter:", error);
+        throw new Error("Could not create chapter");
+    }
+}
+

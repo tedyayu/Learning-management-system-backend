@@ -17,6 +17,7 @@ export const fetchSingleCourse=async (id:string)=>{
         include: {
             department: true,
             instructor: true,
+            Chapter:true
         },
     })
 }
