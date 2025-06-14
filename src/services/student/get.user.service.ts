@@ -8,7 +8,18 @@ export const getStudentByUserName=async(username:string) => {
             username: username
         },
         include:{
-            student:true
+            student:{
+                include:{CourseEnrollments:{
+                    include:{
+                        course:{
+                            include:{
+                                Chapter:true,
+                                department:true,
+                            }
+                        }
+                    }
+                }}
+            }
         }
         })
 }

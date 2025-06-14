@@ -17,9 +17,13 @@ export const fetchSingleCourse=async (id:string)=>{
         include: {
             department: true,
             instructor: true,
-            Chapter:true
+            Chapter: {
+                include: {
+                    lessons: true,
+                },
+            },
         },
-    })
+    });
 }
 
 export const getEnrolledStudentsforCourse=async (id:string)=>{
@@ -32,7 +36,6 @@ export const getEnrolledStudentsforCourse=async (id:string)=>{
                 include: {
                     user: true,
                 },  
-
             }
         },
     })

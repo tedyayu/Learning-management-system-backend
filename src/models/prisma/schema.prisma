@@ -116,8 +116,6 @@ model Courses {
   createdAt       DateTime?  @default(now()) 
   updatedAt       DateTime?  @updatedAt       
   
-  lessons         Lesson[]
-  quizzes         Quiz[]
   enrollments     CourseEnrollment[] @relation("CourseToEnrollment")
 
   Chapter Chapter[]
@@ -130,9 +128,9 @@ model CourseEnrollment {
   course     Courses  @relation("CourseToEnrollment", fields: [courseId], references: [id], onDelete: Cascade)
   courseId   String
   enrolledAt DateTime @default(now())
-
   @@unique([studentId, courseId]) 
 }
+
 model Chapter {
   id           String   @id @default(uuid())
   title        String?
@@ -144,22 +142,22 @@ model Chapter {
 
 model Lesson {
   id           String   @id @default(uuid())
-  title        String?
-  description  String?  
+  title        String? 
   content      String?  
-  pdfUrl       String?   
-  videoUrl     String?   
-  isPublished  Boolean?  @default(false) 
-  course       Courses?   @relation(fields: [courseId], references: [id])
-  courseId     String?
-
-  assignments  Assignment[]  
-  
-  createdAt    DateTime? @default(now()) 
-  updatedAt    DateTime? @updatedAt 
-
-  chapter      Chapter?  @relation("ChapterToLesson", fields: [chapterId], references: [id])
+  order        Int?
+  duration     String?
+  thumbnailUrl String?
+  tags         String[]
+  chapter     Chapter?  @relation("ChapterToLesson", fields: [chapterId], references: [id])
   chapterId    String?
+  assignments  Assignment[]
+  quiz         Quiz[] @relation("LessonToQuiz")
+  videoTitle   String?
+  youtubeUrl   String?
+  videoDescription String?
+  videoDuration String?
+  createdAt    DateTime? @default(now()) 
+  updatedAt    DateTime? @updatedAt
 }
 
 model Assignment {
@@ -192,14 +190,14 @@ model Quiz {
   title     String?
   duration  Int?   
   isOpen    Boolean? @default(true) 
-  course    Courses?  @relation(fields: [courseId], references: [id])
-  courseId  String?
 
   questions Question[]   
   attempts  QuizAttempt[] 
 
   createdAt DateTime? @default(now())
   updatedAt DateTime? @updatedAt
+
+  Lesson Lesson[] @relation("LessonToQuiz")
 }
 
 model Question {

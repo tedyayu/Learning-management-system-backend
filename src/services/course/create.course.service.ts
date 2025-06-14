@@ -89,6 +89,8 @@ export const enrollStudentsInCourse = async (courseId: string, selectedStudents:
     }
 }
 
+ 
+
 export const createNewChapter = async (courseId: string, chapterData: {title : string}) => {
     try {
         const course = await prisma.courses.findUnique({
@@ -112,4 +114,56 @@ export const createNewChapter = async (courseId: string, chapterData: {title : s
         throw new Error("Could not create chapter");
     }
 }
+interface video {
+    title: string;
+    description: string;
+    url: string;
+}
+interface lessonData {
+    name : string;
+    content:string;
+    order: number;
+    duration: string;
+    thumbnailUrl: string;
+    tags: string[];
+    video:video
+}
 
+
+
+export const createNewLesson = async (chapterId: string, lessonData: lessonData) => {
+    try {
+        const chapter = await prisma.chapter.findUnique({
+            where: { id: chapterId },
+        });
+
+        if (!chapter) {
+            throw new Error("Chapter not found");
+        }
+
+        const lesson = await prisma.lesson.create({
+            data: {
+                title: lessonData.name,
+                content: lessonData.content,
+                chapterId: chapterId,
+                order: lessonData.order,
+                duration: lessonData.duration,
+                thumbnailUrl: lessonData.thumbnailUrl,
+                tags: lessonData.tags,
+                videoTitle: lessonData.video.title,
+                videoDescription: lessonData.video.description,
+                youtubeUrl: lessonData.video.url,
+            }, include: {
+                chapter: {
+                    include: {
+                        course: true,
+                    },
+                }
+        }})
+
+        return lesson;
+    } catch (error) {
+        console.error("Error creating lesson:", error);
+        throw new Error("Could not create lesson");
+    }
+}

@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { asyncHandler } from "../utils/asyncHandler";
-import { createNewCourse , getAllCourses, fetchSingleCourse,enrollStudentsInCourse, getEnrolledStudentsforCourse, createNewChapter} from "../services/course";
+import { createNewCourse , getAllCourses, fetchSingleCourse,enrollStudentsInCourse, getEnrolledStudentsforCourse, createNewChapter, createNewLesson,updateTheLesson} from "../services/course";
 import { assignInstractor } from "../services/course";
 import ConflictError from "../errors/conflict.error";       
 
@@ -129,6 +129,52 @@ export const createChapter = asyncHandler(async (req: Request, res: Response) =>
     } catch (error) {
         console.error("Error creating chapter:", error);
         res.status(500).json({ error: "An error occurred while creating the chapter" });
+    }
+}
+);
+
+export const createLesson = asyncHandler(async (req: Request, res: Response) => {
+    try {
+        const { chapterId } = req.params;
+        const lessonData  = req.body;
+
+        console.log("The lesson data is", lessonData);
+        console.log("The chapter id is", chapterId);
+        
+        if (!chapterId || !lessonData) {
+            return res.status(400).json({ error: "Chapter ID and lesson data are required" });
+        }
+        const chapter = await createNewLesson(chapterId, lessonData);
+        if (!chapter) {
+            return res.status(404).json({ error: "Chapter not found" });
+        }
+        res.json(chapter);
+    } catch (error) {
+        console.error("Error creating lesson:", error);
+        res.status(500).json({ error: "An error occurred while creating the lesson" });
+    }
+}
+);
+
+export const updateLesson = asyncHandler(async (req: Request, res: Response) => {
+    try {
+        const { lessonId } = req.params;
+        const lessonData  = req.body;
+
+        console.log("The lesson data is", lessonData);
+        console.log("The lesson id is", lessonId);
+        
+        if (!lessonId || !lessonData) {
+            return res.status(400).json({ error: "Lesson ID and lesson data are required" });
+        }
+        const chapter = await updateTheLesson(lessonId, lessonData);
+        if (!chapter) {
+            return res.status(404).json({ error: "Chapter not found" });
+        }
+        res.json(chapter);
+    } catch (error) {
+        console.error("Error creating lesson:", error);
+        res.status(500).json({ error: "An error occurred while creating the lesson" });
     }
 }
 );
