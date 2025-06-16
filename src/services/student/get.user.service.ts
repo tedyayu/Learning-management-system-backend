@@ -13,7 +13,11 @@ export const getStudentByUserName=async(username:string) => {
                     include:{
                         course:{
                             include:{
-                                Chapter:true,
+                                Chapter:{
+                                    include:{
+                                        lessons:true
+                                    }
+                                },
                                 department:true,
                             }
                         }

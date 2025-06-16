@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import bcrypt from "bcryptjs";
 import { createStudent, getStudentById } from "../services/student";
 import { getStudentByUserName } from "../services/student";
+import { addAnnouncement, getAllAnnouncements , EditAnnouncement} from "../services/admin";
 import jwt from "jsonwebtoken";
 import { asyncHandler } from "../utils/asyncHandler";
 import ConflictError from "../errors/conflict.error";
@@ -83,4 +84,43 @@ export const logOutUser = asyncHandler(async (req: Request, res: Response) => {
 
         res.status(200).json({ message: "Logged out successfully" });
    
+});
+
+export const submitAnnouncement = asyncHandler(async (req: Request, res: Response) => {
+    const { announcement } = req.body;
+    if (!announcement.title || !announcement.message) {
+        return res.status(400).json({ error: "Title and content are required" });
+    }
+    
+    await addAnnouncement(announcement);
+    console.log("Announcement submitted:", announcement);
+    res.status(201).json({ message: "Announcement submitted successfully" });
+});
+
+export const getAnnouncements = asyncHandler(async (req: Request, res: Response) => {
+    try {
+        const announcements = await getAllAnnouncements();
+        console.log("Fetched announcements:", announcements);
+        res.json(announcements);
+    } catch (error) {
+        console.error("Error fetching announcements:", error);
+        res.status(500).json({ error: "An error occurred while fetching announcements" });
+    }
+});
+
+export const updateAnnouncement = asyncHandler(async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const { title, message } = req.body;
+
+    if (!title || !message) {
+        return res.status(400).json({ error: "Title and message are required" });
+    }
+
+    try {
+        const updatedAnnouncement = await EditAnnouncement(id, { title, message });
+        res.json(updatedAnnouncement);
+    } catch (error) {
+        console.error("Error updating announcement:", error);
+        res.status(500).json({ error: "An error occurred while updating the announcement" });
+    }
 });

@@ -1,6 +1,7 @@
 import prisma from "../../utils/prismaInstance";
 
 interface CourseData {
+    courseImage: string;
     courseName: string;
     shortDescription: string;
     credits: number;
@@ -30,6 +31,7 @@ export const createNewCourse = async (courseData: CourseData) => {
         }
         const course = await prisma.courses.create({
             data: {
+                courseImageurl: courseData.courseImage,
                 name: courseData.courseName,
                 description: courseData.shortDescription,
                 code: courseData.courseCode,
@@ -127,6 +129,7 @@ interface lessonData {
     thumbnailUrl: string;
     tags: string[];
     video:video
+    lessonDescription: string;
 }
 
 
@@ -144,6 +147,7 @@ export const createNewLesson = async (chapterId: string, lessonData: lessonData)
         const lesson = await prisma.lesson.create({
             data: {
                 title: lessonData.name,
+                description: lessonData.lessonDescription,
                 content: lessonData.content,
                 chapterId: chapterId,
                 order: lessonData.order,

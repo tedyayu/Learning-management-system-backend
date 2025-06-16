@@ -7,7 +7,7 @@ import studentRoutes from "./routes/studentRoutes";
 import instractorRoutes from "./routes/instractorRoutes";
 import departmentRoutes from "./routes/departmentRoutes";
 import courseRoutes from "./routes/courseRoutes";
-import recommendationRoutes from "./routes/recommendationRoutes";
+import adminRoutes from "./routes/adminRoutes";
 import prisma from "./utils/prismaInstance";
 
 const cookieParser = require("cookie-parser");
@@ -32,7 +32,7 @@ app.use("/api/student",studentRoutes);
 app.use("/api/instractor",instractorRoutes);
 app.use("/api/department",departmentRoutes);
 app.use("/api/course",courseRoutes);
-app.use('/recommend',recommendationRoutes);
+app.use("/api/admin",adminRoutes);
 
 
 app.use(errorHandlerMiddleware);

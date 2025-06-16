@@ -8,7 +8,13 @@ interface departmentData{
 }
 
 export const getAllDepartments=async()=>{
-    return await prisma.department.findMany();
+    return await prisma.department.findMany(
+        {include:
+            {courses:{
+                include:{Chapter:{
+                    include:{lessons:true}
+                },instructor:{include:{user:true}}}
+    }}}); 
 }
 
 export const getDepartmentByname=async(name:string)=>{

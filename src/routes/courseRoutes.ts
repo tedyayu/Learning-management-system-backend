@@ -1,5 +1,5 @@
 import express from 'express';
-import { createCourse , assignInstractorForCourse,getCourses,getSingleCourse, enrollStudents,getEnrolledStudents,createChapter,createLesson, updateLesson} from '../controller/courseController';
+import { createCourse , assignInstractorForCourse,getCourses,getSingleCourse, enrollStudents,getEnrolledStudents,createChapter,createLesson, updateLesson , courseComplete} from '../controller/courseController';
 
 const router=express.Router();
 
@@ -12,5 +12,6 @@ router.post("/:chapterId/createLesson", createLesson);
 router.put("/updateLesson/:lessonId", updateLesson)
 router.post("/enrollStudents",enrollStudents);
 router.get("/:courseId/enrolledUsers", getEnrolledStudents);
+router.post("/complete", courseComplete);
 
 export default router;

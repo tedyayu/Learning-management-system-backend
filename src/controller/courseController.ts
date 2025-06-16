@@ -178,3 +178,25 @@ export const updateLesson = asyncHandler(async (req: Request, res: Response) => 
     }
 }
 );
+
+export const courseComplete = asyncHandler(async (req: Request, res: Response) => {
+    try {
+        const {  userId, lessonId, courseId } = req.body;
+        console.log("The user id is", userId);
+        console.log("The lesson id is", lessonId);
+        console.log("The course id is", courseId);
+        if (!courseId) {
+            return res.status(400).json({ error: "Course ID is required" });
+        }
+        const course = await fetchSingleCourse(courseId);
+        if (!course) {
+            return res.status(404).json({ error: "Course not found" });
+        }
+        
+        res.json({ message: "Course marked as complete" });
+    } catch (error) {
+        console.error("Error completing course:", error);
+        res.status(500).json({ error: "An error occurred while completing the course" });
+    }
+}
+);
