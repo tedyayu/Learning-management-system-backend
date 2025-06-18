@@ -13,7 +13,7 @@ import prisma from "./utils/prismaInstance";
 const cookieParser = require("cookie-parser");
 
 dotenv.config();
-const PORT:Number =Number(process.env.PORT) || 8000;
+const PORT=process.env.PORT ;
 
 const app:Express=express()
 app.use(
