@@ -3,11 +3,7 @@ const adminPassword = process.env.ADMIN_PASSWORD;
 import prisma from "../../utils/prismaInstance";
 
 
-export const getAdminByUserName=(username:string)=>{
-    if(username===adminUsername){
-        return {username:adminUsername,role:"ADMIN"};
-    }
-}
+
 
 export const getAllAnnouncements=async()=>{
     try {

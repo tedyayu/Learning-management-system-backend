@@ -12,10 +12,8 @@ import prisma from "./utils/prismaInstance";
 
 const cookieParser = require("cookie-parser");
 
-
 dotenv.config();
 const PORT:Number =Number(process.env.PORT) || 5000;
-
 
 const app:Express=express()
 app.use(
@@ -33,7 +31,6 @@ app.use("/api/instractor",instractorRoutes);
 app.use("/api/department",departmentRoutes);
 app.use("/api/course",courseRoutes);
 app.use("/api/admin",adminRoutes);
-
 
 app.use(errorHandlerMiddleware);
 

@@ -31,3 +31,11 @@ export const getInstractorByUserID=async (id:string)=>{
         },
     })
 }
+
+export const getInstractorById=async(id:string) => {
+    return await prisma.user.findFirst({
+        where: {
+            id: id
+        }
+        })
+}

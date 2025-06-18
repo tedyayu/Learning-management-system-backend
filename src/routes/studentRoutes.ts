@@ -1,12 +1,12 @@
 import express from "express";
 import { fetchAllStudents ,searchStudents, updateProfile, updatePassword} from "../controller/studentController"; 
-import {authenticateUser,authenticateRole} from "../middleware/auth.middleware"
+import {authenticateUser} from "../middleware/auth.middleware"
 const router=express.Router();
 
-router.get("/all",authenticateUser,authenticateRole('STUDENT'),fetchAllStudents)
-router.get("/search",authenticateUser,authenticateRole('STUDENT'),searchStudents)
-router.post("/updateProfile",authenticateUser,authenticateRole('STUDENT'), updateProfile);
-router.post("/updatePassword",authenticateUser,authenticateRole('STUDENT'), updatePassword);
+router.get("/all",authenticateUser,fetchAllStudents)
+router.get("/search",authenticateUser,searchStudents)
+router.post("/updateProfile",authenticateUser, updateProfile);
+router.post("/updatePassword",authenticateUser, updatePassword);
 
 
 export default router;
