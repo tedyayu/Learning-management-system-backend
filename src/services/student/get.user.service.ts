@@ -23,6 +23,20 @@ export const getStudentByUserName=async(username:string) => {
                         }
                     }
                 }}
+            },
+            instructor:{
+                include:{Courses:{
+                    include:{
+                        department:true,
+                        enrollments:true,
+                        Chapter:{
+                            include:{
+                                lessons:true
+                            }
+                        }
+                        
+                    }
+                }}
             }
         }
         })

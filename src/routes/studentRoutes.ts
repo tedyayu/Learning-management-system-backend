@@ -3,8 +3,8 @@ import { fetchAllStudents ,searchStudents, updateProfile, updatePassword} from "
 import {authenticateUser,authenticateRole} from "../middleware/auth.middleware"
 const router=express.Router();
 
-router.get("/all",fetchAllStudents)
-router.get("/search",searchStudents)
+router.get("/all",authenticateUser,authenticateRole('STUDENT'),fetchAllStudents)
+router.get("/search",authenticateUser,authenticateRole('STUDENT'),searchStudents)
 router.post("/updateProfile",authenticateUser,authenticateRole('STUDENT'), updateProfile);
 router.post("/updatePassword",authenticateUser,authenticateRole('STUDENT'), updatePassword);
 

@@ -208,7 +208,6 @@ model CourseProgress {
   completed  Boolean  @default(false)
   updatedAt  DateTime @updatedAt
   createdAt  DateTime @default(now())
-
   @@unique([studentId, courseId])
 }
 

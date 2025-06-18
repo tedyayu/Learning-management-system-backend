@@ -4,7 +4,7 @@ import prisma from "../../utils/prismaInstance";
 interface CreateUserData {
     username: string;
     password: string;
-    ID_NO: string;
+    studentId: string;
     email: string;
     department: string;
 }
@@ -23,7 +23,7 @@ export const  createStudent = async(data:CreateUserData) => {
     const student=await prisma.student.create({
         data:{
             firstName:data.username,
-            studentId:data.ID_NO,
+            studentId:data.studentId,
             department:data.department,
             user:{
                 connect:{

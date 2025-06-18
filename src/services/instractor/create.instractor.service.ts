@@ -2,7 +2,7 @@ import prisma from "../../utils/prismaInstance";
 interface CreateInstructorData {
     username: string;
     password: string;
-    ID_NO: string;
+    instructorId: string;
     email: string;
 }
 
@@ -19,7 +19,7 @@ export const createInstructor =async (data:CreateInstructorData)=>{
     const instructor= await prisma.instructor.create({
         data:{
             firstName:data.username,
-            instructorId:data.ID_NO,
+            instructorId:data.instructorId,
             user:{
                 connect:{
                     id:user.id

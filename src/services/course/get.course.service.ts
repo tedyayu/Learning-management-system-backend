@@ -17,6 +17,7 @@ export const fetchSingleCourse=async (id:string)=>{
         include: {
             department: true,
             instructor: true,
+            enrollments:true,
             Chapter: {
                 include: {
                     lessons: true,
@@ -40,3 +41,12 @@ export const getEnrolledStudentsforCourse=async (id:string)=>{
         },
     })
 };
+
+export const fetchProgress=async(userId:string,courseId:string) => {
+    return await prisma.courseProgress.findFirst({
+        where: {
+            studentId: userId,
+            courseId: courseId
+        }
+    })
+}

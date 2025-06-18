@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import bcrypt from "bcryptjs";
 import { createStudent, getStudentById } from "../services/student";
 import { getStudentByUserName } from "../services/student";
-import { addAnnouncement, getAllAnnouncements , EditAnnouncement} from "../services/admin";
+import { addAnnouncement, getAllAnnouncements , EditAnnouncement ,deleteAnnouncement} from "../services/admin";
 import jwt from "jsonwebtoken";
 import { asyncHandler } from "../utils/asyncHandler";
 import ConflictError from "../errors/conflict.error";
@@ -10,7 +10,7 @@ import ConflictError from "../errors/conflict.error";
 
 
 export const registerStudent = asyncHandler(async (req:Request,res:Response) => {
-    const {username,password,ID_NO,email ,department}=req.body;
+    const {username,password,studentId,email ,department}=req.body;
     const hashedPassword=await bcrypt.hash(password,10);
 
     const user = await getStudentByUserName(username);
@@ -19,7 +19,7 @@ export const registerStudent = asyncHandler(async (req:Request,res:Response) => 
     const newStudent = createStudent({
         username,
         password:hashedPassword,
-        ID_NO,
+        studentId,
         email,
         department
     })
@@ -42,8 +42,7 @@ export const loginUser= asyncHandler(async (req:Request,res:Response)=>{
             res.cookie("token", token, { httpOnly: true, secure: false, sameSite: "strict" });
             res.json({ message: "Login successful", username, role: "ADMIN" });
             return;
-        }
-            
+        }    
 
         const user=await getStudentByUserName(username);
         console.log(user);
@@ -122,5 +121,17 @@ export const updateAnnouncement = asyncHandler(async (req: Request, res: Respons
     } catch (error) {
         console.error("Error updating announcement:", error);
         res.status(500).json({ error: "An error occurred while updating the announcement" });
+    }
+});
+
+export const deleteSelectedAnnouncement = asyncHandler(async (req: Request, res: Response) => {
+    const { id } = req.params;
+
+    try {
+        await deleteAnnouncement(id);
+        res.status(204).send();
+    } catch (error) {
+        console.error("Error deleting announcement:", error);
+        res.status(500).json({ error: "An error occurred while deleting the announcement" });
     }
 });

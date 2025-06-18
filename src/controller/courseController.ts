@@ -1,6 +1,16 @@
 import { Request, Response } from "express";
 import { asyncHandler } from "../utils/asyncHandler";
-import { createNewCourse , getAllCourses, fetchSingleCourse,enrollStudentsInCourse, getEnrolledStudentsforCourse, createNewChapter, createNewLesson,updateTheLesson} from "../services/course";
+import { createNewCourse ,
+     getAllCourses, 
+     fetchSingleCourse,
+     enrollStudentsInCourse,
+      getEnrolledStudentsforCourse, 
+      createNewChapter, 
+      createNewLesson,
+      updateTheLesson, 
+      markCompletedCourse,
+       fetchProgress,
+       deleteTheChapter,deleteTheLesson, deleteTheCourse} from "../services/course";
 import { assignInstractor } from "../services/course";
 import ConflictError from "../errors/conflict.error";       
 
@@ -53,6 +63,8 @@ export const getSingleCourse = asyncHandler(async (req: Request, res: Response) 
     }
 }
 );
+
+
 
 export const assignInstractorForCourse = asyncHandler(async (req: Request, res: Response) => {
     try {
@@ -181,22 +193,90 @@ export const updateLesson = asyncHandler(async (req: Request, res: Response) => 
 
 export const courseComplete = asyncHandler(async (req: Request, res: Response) => {
     try {
-        const {  userId, lessonId, courseId } = req.body;
+        const {  userId, lessonId } = req.body;
         console.log("The user id is", userId);
         console.log("The lesson id is", lessonId);
-        console.log("The course id is", courseId);
-        if (!courseId) {
-            return res.status(400).json({ error: "Course ID is required" });
+        if (!lessonId) {
+            return res.status(400).json({ error: "Lesson ID is required" });
         }
-        const course = await fetchSingleCourse(courseId);
-        if (!course) {
-            return res.status(404).json({ error: "Course not found" });
-        }
-        
-        res.json({ message: "Course marked as complete" });
+        const Progress=await markCompletedCourse(userId, lessonId);
+        console.log("The progress is", Progress);
+        res.json({ message: "Lesson marked as complete", Progress });
     } catch (error) {
         console.error("Error completing course:", error);
         res.status(500).json({ error: "An error occurred while completing the course" });
+    }
+}
+);
+
+export const fetchCourseProgress = asyncHandler(async (req: Request, res: Response) => {
+    try {
+        const { userId, courseId } = req.params;
+        if (!userId || !courseId) {
+            return res.status(400).json({ error: "User ID and Course ID are required" });
+        }
+        const progress = await fetchProgress(userId, courseId);
+        if (!progress) {
+            return res.status(404).json({ error: "Progress not found" });
+        }
+        res.json(progress);
+    } catch (error) {
+        console.error("Error fetching course progress:", error);
+        res.status(500).json({ error: "An error occurred while fetching course progress" });
+    }
+}
+);
+
+export const deleteChapter = asyncHandler(async (req: Request, res: Response) => {  
+    try {
+        const { chapterId } = req.params;
+        if (!chapterId) {
+            return res.status(400).json({ error: "Chapter ID is required" });
+        }
+        const deletedChapter = await deleteTheChapter(chapterId);
+        if (!deletedChapter) {
+            return res.status(404).json({ error: "Chapter not found" });
+        }
+        res.json({ message: "Chapter deleted successfully", deletedChapter });
+    } catch (error) {
+        console.error("Error deleting chapter:", error);
+        res.status(500).json({ error: "An error occurred while deleting the chapter" });
+    }
+}
+);
+
+export const deleteLesson = asyncHandler(async (req: Request, res: Response) => {
+    try {
+        const { lessonId } = req.params;
+        if (!lessonId) {
+            return res.status(400).json({ error: "Lesson ID is required" });
+        }
+        const deletedLesson = await deleteTheLesson(lessonId);
+        if (!deletedLesson) {
+            return res.status(404).json({ error: "Lesson not found" });
+        }
+        res.json({ message: "Lesson deleted successfully", deletedLesson });
+    } catch (error) {
+        console.error("Error deleting lesson:", error);
+        res.status(500).json({ error: "An error occurred while deleting the lesson" });
+    }
+}
+);
+
+export const deleteCourse = asyncHandler(async (req: Request, res: Response) => {
+    try {
+        const { courseId } = req.params;
+        if (!courseId) {
+            return res.status(400).json({ error: "Course ID is required" });
+        }
+        const deletedCourse = await deleteTheCourse(courseId);
+        if (!deletedCourse) {
+            return res.status(404).json({ error: "Course not found" });
+        }
+        res.json({ message: "Course deleted successfully", deletedCourse });
+    } catch (error) {
+        console.error("Error deleting course:", error);
+        res.status(500).json({ error: "An error occurred while deleting the course" });
     }
 }
 );
