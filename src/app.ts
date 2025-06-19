@@ -33,6 +33,12 @@ app.use("/api/department",departmentRoutes);
 app.use("/api/course",courseRoutes);
 app.use("/api/admin",adminRoutes);
 
+app.get("/", (req: Request, res: Response) => {
+    res.status(200).json({ 
+        message: "🚀✨ The server is running! 🎉🟢💻🌟🔥🙌😃👍🌈🛡️🔒"
+    });
+});
+
 app.use(errorHandlerMiddleware);
 
 const startServer=async()=>{
