@@ -40,7 +40,9 @@ const startServer=async()=>{
         await prisma.$connect();
         console.log("Database connected")
 
-        app.listen()
+        app.listen(PORT,()=>{
+            console.log(`server is running at ${PORT}`)
+        })
 
     } catch (error) {
         console.error("Error starting server:",error)
