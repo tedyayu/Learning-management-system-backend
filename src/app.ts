@@ -13,7 +13,7 @@ import prisma from "./utils/prismaInstance";
 const cookieParser = require("cookie-parser");
 
 dotenv.config();
-const PORT = process.env.PORT ? Number(process.env.PORT) : 8080;
+const PORT = process.env.PORT ? Number(process.env.PORT) || 8080 : 8080;
 
 const app:Express=express()
 app.use(
@@ -40,9 +40,7 @@ const startServer=async()=>{
         await prisma.$connect();
         console.log("Database connected")
 
-        app.listen(PORT,()=>{
-            console.log(`server is running at ${PORT}`)
-        })
+        app.listen()
 
     } catch (error) {
         console.error("Error starting server:",error)
