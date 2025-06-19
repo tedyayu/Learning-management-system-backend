@@ -18,7 +18,7 @@ const PORT = process.env.PORT ? Number(process.env.PORT) || 8080 : 8080;
 const app:Express=express()
 app.use(
     cors({
-        origin:"http://localhost:5173",
+        origin:"https://afro-lang-frontend.onrender.com",
         credentials: true ,
         methods: ["GET", "POST", "PUT", "DELETE"]
     })
