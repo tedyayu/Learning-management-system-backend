@@ -13,13 +13,14 @@ import prisma from "./utils/prismaInstance";
 const cookieParser = require("cookie-parser");
 
 dotenv.config();
-const PORT=process.env.PORT ;
+const PORT = process.env.PORT ? Number(process.env.PORT) : 3000;
 
 const app:Express=express()
 app.use(
     cors({
         origin:"http://localhost:5173",
-        credentials: true 
+        credentials: true ,
+        methods: ["GET", "POST", "PUT", "DELETE"]
     })
 );
 
